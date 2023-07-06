@@ -1,0 +1,42 @@
+server:
+  port: ${CUSTOM.SERVER.PORT:9080}
+
+# Eureka Client Config
+eureka:
+  client:
+    fetchRegistry: true
+    registerWithEureka: true
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
+
+# Cloud Gateway Routes
+spring:
+  cloud:
+    gateway:
+      routes: 
+
+        - id: product-service
+          uri: lb://product-service
+          predicates:
+            - Path=/api/product-service/**
+          filters:
+            - StripPrefix=2
+
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/api/user-service/**
+          filters:
+            - StripPrefix=2
+            - CustomFilterMitocode=MitocodeKey, MitocodeValue
+
+            # - name: CustomFilter:
+            #   args:
+            #     headerKey: MitocodeKey
+            #     headerValue: MitocodeValue
+
+            # - AddRequestHeader=MitocodeKey, MitocodeValue
+            # - AddResponseHeader=MitocodeHeader, MitocodeHeaderValue
+            - AddRequestParameter=role, ROLE_USER
+  main:
+    web-application-type: reactive
