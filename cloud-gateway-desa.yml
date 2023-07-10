@@ -21,7 +21,11 @@ spring:
             - Path=/api/product-service/**
           filters:
             - StripPrefix=2
-
+            - name: CustomFilterProduct
+              args:
+                headerKeyProd: CharlieCodeKey
+                headerValueProd: CharlieCodeValue
+               
         - id: user-service
           uri: lb://user-service
           predicates:
