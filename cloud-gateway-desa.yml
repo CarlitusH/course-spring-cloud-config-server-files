@@ -23,7 +23,14 @@ resilience4j:
   instances:
    product-cb:
     base-config: circuitBreakerProduct
-
+ timelimiter:
+  configs:
+   timeLimiterProduct:
+    timeoutDuration: 2s
+  instances:
+   default:
+    base-config: timeLimiterProduct
+   
 # Cloud Gateway Routes
 spring:
   cloud:
@@ -39,10 +46,12 @@ spring:
             - name: CircuitBreaker
               args:
                 name: product-cb
-            # - name: CustomFilterProduct
-             # args:
-             #   headerKeyProd: CharlieCodeKey
-             #   headerValueProd: CharlieCodeValue
+                statusCode: 400, 401, 403, 500, 503, 504
+                fallbackUri: forward:/api/user-service/user
+            - name: CustomFilterProduct
+              args:
+                headerKeyProd: CharlieCodeKey
+                headerValueProd: CharlieCodeValue
                
         - id: user-service
           uri: lb://user-service
