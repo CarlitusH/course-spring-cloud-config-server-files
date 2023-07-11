@@ -9,16 +9,23 @@ eureka:
     serviceUrl:
       defaultZone: http://localhost:8761/eureka
 
-# Circuit Breaker config
+# Circuit Breaker configuración, con resilience4j.
 resilience4j:
  circuitbreaker:
   configs:
+  # Aquí definimos el nombre del circuit breaker
    circuitBreakerProduct:
+    # cantidad de peticiones a evaluar
     slidingWindowSize: 16
+    # % de peticiones(del numero indicado en sliding) que deben fallar para pasar a estado abierto
     failureRateThreshold: 75
+    # Tiempo que estará en estado abierto antes de pasar a semiabierto
     waitDurationInOpenState: 30s
+    # Cantidad de peticiones que realizará en estado semiabierto, antes de pasar a estado abierto o cerrado
     permittedNumberOfCallsInHalfOpenState: 10
+    # Tiempo máximo de espera para cada petición y que cuente como LENTA
     slowCallDurationThreshold: 2s
+    # % de peticiones que sean calificadas como lentas, para pasar a estado abierto. Trabaja en conjunto con slowCallDurationTheshold
     slowCallRateThreshold: 50
   instances:
    product-cb:
@@ -31,22 +38,28 @@ resilience4j:
    default:
     base-config: timeLimiterProduct
    
-# Cloud Gateway Routes
+# Cloud Gateway Routes, configuración de microservicios que podrán se accedidos a través de cloud-service 
 spring:
   cloud:
     gateway:
-      routes: 
-
+      # routes es un arreglo, por lo tanto podemos agregar varios -id, con sus respectivos, uri, - predicates(arreglo) y filters(arreglo)
+      routes:
+          # El id puede cualquier nombre, pero se suele poder el nombre del microservicio a registrar
         - id: product-service
+          # en la uri debemos PONER SI o SI el name del microservicio, configurado en el archivo application o bootstrap
           uri: lb://product-service
           predicates:
             - Path=/api/product-service/**
+          # Los filtros son un arreglo por lo tanto podemos agregar varios - name
           filters:
             - StripPrefix=2
             - name: CircuitBreaker
               args:
+                # El name lo tomamos de la configuración del circuitBreaker, en instances
                 name: product-cb
+                # Status code en los que actuará en circuitBreaker
                 statusCode: 400, 401, 403, 500, 503, 504
+                # Método o ruta fallback en caso pase a estado abierto
                 fallbackUri: forward:/api/user-service/user
             - name: CustomFilterProduct
               args:
