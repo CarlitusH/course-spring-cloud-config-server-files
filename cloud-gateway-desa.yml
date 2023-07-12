@@ -82,6 +82,6 @@ spring:
             # - AddRequestHeader=MitocodeKey, MitocodeValue
             # - AddResponseHeader=MitocodeHeader, MitocodeHeaderValue
             - AddRequestParameter=role, ROLE_ADMIN
-            #- AddRequestParameter=roleU, ROLE_USER
+            - AddRequestParameter=roleU, ROLE_USER
   main:
     web-application-type: reactive
