@@ -34,7 +34,7 @@ resilience4j:
   configs:
    timeLimiterProduct:
    #circuitBreakerProduct: 
-    timeoutDuration:1700
+    timeoutDuration: 1700
   instances:
    #default:
    product-cb:
