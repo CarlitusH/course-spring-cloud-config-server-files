@@ -33,9 +33,11 @@ resilience4j:
  timelimiter:
   configs:
    timeLimiterProduct:
+   #circuitBreakerProduct: 
     timeoutDuration: 2s
   instances:
-   default:
+   #default:
+   product-cb:
     base-config: timeLimiterProduct
    
 # Cloud Gateway Routes, configuración de microservicios que podrán se accedidos a través de cloud-service 
