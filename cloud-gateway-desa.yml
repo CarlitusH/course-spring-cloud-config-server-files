@@ -37,6 +37,7 @@ resilience4j:
     timeoutDuration: 1700
   instances:
    #default:
+   # El timelimiter debe tener asociado la instancia del circuit breaker, por lo tanto ambos deben llevar los mismos nombres (osea los instances de CB y Timelimiter debe llamarse igual)
    product-cb:
     base-config: timeLimiterProduct
    
